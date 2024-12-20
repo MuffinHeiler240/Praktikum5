@@ -96,17 +96,30 @@ matrix matrixPlusMatrix(matrix a, matrix b) {
     return c;
 }
 
+vector createVectorWithOne(unsigned short n) {
+    vector v = createVector(n);
+    unsigned short i;
+    for (i = 0; i < n; i++) {
+        setValue(v,i,1);
+    }
+    return v;
+}
+
 vector matrixDotVector(matrix a, vector x) {
     unsigned short i,j;
-    if (a->m != x->n) {
+    double temp = 0;
+    if (a->m != size(x)) {
         printf("Error: matrix dimensions do not match\n");
         exit(-1);
     }
-    vector y = createVector(a->n);
+    vector y = createVectorWithOne(a->n);
     for (i = 0; i < a->n; i++) {
         for (j = 0; j < a->m; j++) {
-            y->data[i] += a->data[i][j] * x->data[j];
+            temp += a->data[i][j] * getValue(x,j);
         }
+        setValue(y,i,temp);
+        temp = 0;
     }
     return y;
 }
+
