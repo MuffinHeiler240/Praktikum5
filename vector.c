@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "matrix.h"
+#include "vector.h"
 
 typedef struct vector_struct {
     unsigned short n;
