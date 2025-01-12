@@ -15,26 +15,34 @@ typedef struct matrix_struct {
     double **data;
 } matrix_struct;
 
+
 matrix createMatrix(unsigned short n, unsigned short m) {
     unsigned short i;
-    matrix a = (matrix) malloc(sizeof(matrix_struct));
-    a->n = n;
-    a->m = m;
-    a->data = (double **) calloc(n, sizeof(double *));
+    size_t total_size = sizeof(matrix_struct) + sizeof(double *) * n + sizeof(double) * n * m;
+    matrix_struct *matrix = (matrix_struct *)calloc(1, total_size);
+
+    matrix->n = n;
+    matrix->m = m;
+
+    double **row_ptrs = (double **)(matrix + 1);
+    double *data_start = (double *)(row_ptrs + n);
+
     for (i = 0; i < n; i++) {
-        a->data[i] = (double *) calloc(m, sizeof(double));
+        row_ptrs[i] = data_start + i * m;
     }
-    return a;
+
+    matrix->data = row_ptrs;
+
+    return matrix;
 }
 
 void rmMatrix(matrix a) {
-    unsigned short i;
-    for ( i = 0; i < a->n; i++) {
-        free(a->data[i]);
+    if (a) {
+        void* basePointer = (void*)a;
+        free(basePointer);
     }
-    free(a->data);
-    free(a);
 }
+
 
 unsigned short rows(matrix a) {
     return a->n;
@@ -63,6 +71,7 @@ void setEntry(matrix a, unsigned short r, unsigned short c, double v) {
     }
     a->data[r][c] = v;
 }
+
 
 matrix matrixDotMatrix(matrix a, matrix b) {
     unsigned short i,j,k;
@@ -96,23 +105,14 @@ matrix matrixPlusMatrix(matrix a, matrix b) {
     return c;
 }
 
-vector createVectorWithOne(unsigned short n) {
-    vector v = createVector(n);
-    unsigned short i;
-    for (i = 0; i < n; i++) {
-        setValue(v,i,1);
-    }
-    return v;
-}
-
 vector matrixDotVector(matrix a, vector x) {
     unsigned short i,j;
-    double temp = 0;
+    register double temp = 0;
     if (a->m != size(x)) {
         printf("Error: matrix dimensions do not match\n");
         exit(-1);
     }
-    vector y = createVectorWithOne(a->n);
+    vector y = createVector(a->n);
     for (i = 0; i < a->n; i++) {
         for (j = 0; j < a->m; j++) {
             temp += a->data[i][j] * getValue(x,j);

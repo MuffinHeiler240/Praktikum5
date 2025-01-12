@@ -12,16 +12,28 @@ typedef struct vector_struct {
     double *data;
 } vector_struct;
 
+/**
 vector createVector(unsigned short n) {
     vector v = (vector) malloc(sizeof(vector_struct));
     v->n = n;
     v->data = (double *) calloc(n, sizeof(double));
     return v;
+}**/
+
+vector createVector(unsigned short n) {
+    vector v;
+    v = (vector) calloc(1, sizeof(vector_struct) + n * sizeof(double));
+    if(v) {
+        v->n = n;
+        v->data = (double *) (v + 1);
+    }
+    return v;
 }
 
 void rmVector(vector v) {
-    free(v->data);
-    free(v);
+    if (v) {
+        free(v);
+    }
 }
 
 unsigned short size(vector v) {
