@@ -32,14 +32,12 @@ matrix createMatrix(unsigned short n, unsigned short m) {
     }
 
     matrix->data = row_ptrs;
-
     return matrix;
 }
 
 void rmMatrix(matrix a) {
     if (a) {
-        void* basePointer = (void*)a;
-        free(basePointer);
+        free(a);
     }
 }
 
@@ -75,6 +73,7 @@ void setEntry(matrix a, unsigned short r, unsigned short c, double v) {
 
 matrix matrixDotMatrix(matrix a, matrix b) {
     unsigned short i,j,k;
+    register double temp = 0;
     if (a->m != b->n) {
         printf("Error: matrix dimensions do not match\n");
         exit(-1);
@@ -83,8 +82,10 @@ matrix matrixDotMatrix(matrix a, matrix b) {
     for (i = 0; i < a->n; i++) {
         for ( j = 0; j < b->m; j++) {
             for ( k = 0; k < a->m; k++) {
-                c->data[i][j] += a->data[i][k] * b->data[k][j];
+                 temp += a->data[i][k] * b->data[k][j];
             }
+            c->data[i][j] = temp;
+            temp = 0;
         }
     }
     return c;

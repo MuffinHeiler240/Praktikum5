@@ -12,13 +12,6 @@ typedef struct vector_struct {
     double *data;
 } vector_struct;
 
-/**
-vector createVector(unsigned short n) {
-    vector v = (vector) malloc(sizeof(vector_struct));
-    v->n = n;
-    v->data = (double *) calloc(n, sizeof(double));
-    return v;
-}**/
 
 vector createVector(unsigned short n) {
     vector v;
@@ -69,7 +62,9 @@ double vectorDotVector(vector a, vector b) {
         exit(-1);
     }
 
-    for (i = 0; i < a->n; c += a->data[i] * b->data[i], i++){}
+    for (i = 0; i < a->n;i++) {
+        c += a->data[i] * b->data[i];
+    }
     return c;
 }
 
@@ -82,6 +77,8 @@ vector vectorPlusVector(vector a, vector b) {
         exit(-1);
     }
 
-    for (i = 0; i < a->n; c->data[i] = a->data[i] + b->data[i], i++) {}
+    for (i = 0; i < a->n; i++) {
+        c->data[i] = a->data[i] + b->data[i];
+    }
     return c;
 }
